@@ -3,31 +3,40 @@
 return [
     'menu' => [
         [
-            'title' => 'Home',
+            'title' => 'Main App',
+            'url' => '/'
+        ],
+        [
+            'title' => 'Getting started',
+            'url' => '/admin'
+        ],
+        [
+            'title' => 'Permission Management',
+            'url' => '#',
             'submenu' => [
                 [
-                    'title' => 'Home 1',
-                    'submenu' => [
-                        [
-                            'title' => 'Home 1.1',
-                            'submenu' => [
-                                [
-                                    'title' => 'Home 1.1.1'
-                                ]
-                            ]
-                        ],
-                        [
-                            'title' => 'Home 1.2'
-                        ]
-                    ]
+                    'title' => 'List Permission',
+                    'url' => '/admin/permission'
                 ],
                 [
-                    'title' => 'Home 2'
+                    'title' => 'Add New Permission',
+                    'url' => '/admin/permission/add'
                 ]
             ]
         ],
         [
-            'title' => 'About'
+            'title' => 'Role Management',
+            'url' => '#',
+            'submenu' => [
+                [
+                    'title' => 'List Role',
+                    'url' => '/admin/role'
+                ],
+                [
+                    'title' => 'Add new Role',
+                    'url' => '/admin/role/add'
+                ]
+            ]
         ]
     ]
 ];
