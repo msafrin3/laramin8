@@ -27,6 +27,8 @@ Route::group(['middleware' => 'auth'], function() {
     });
     Route::get('admin/home', [App\Http\Controllers\AdminController::class, 'index'])->name('admin.index');
     Route::get('admin/permission', [App\Http\Controllers\AdminController::class, 'permission'])->name('admin.permission');
+    Route::post('admin/permission/list', [App\Http\Controllers\AdminController::class, 'permissionGet'])->name('admin.permission.list');
     Route::get('admin/permission/add', [App\Http\Controllers\AdminController::class, 'permissionAdd'])->name('admin.permission.add');
     Route::post('admin/permission/add', [App\Http\Controllers\AdminController::class, 'permissionStore'])->name('admin.permission.store');
+    Route::post('admin/permission/batch', [App\Http\Controllers\AdminController::class, 'permissionBatch'])->name('admin.permission.batch');
 });

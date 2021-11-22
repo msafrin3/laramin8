@@ -61,6 +61,23 @@
 		  gtag('config', 'G-SEP1T05Z5V');
 		</script>
 
+		{{-- DataTable --}}
+		<link rel="stylesheet" href="//cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+		<link rel="stylesheet" href="{{ url('') }}/plugins/dataTables/dataTables.checkboxes.css">
+        <link rel="stylesheet" href="//cdn.datatables.net/fixedcolumns/3.3.0/css/fixedColumns.dataTables.min.css">
+
+		<style>
+			.table {
+				color: unset !important;
+			}
+			.table tr {
+				background: unset !important;
+			}
+			.table>:not(caption)>*>* {
+				border-bottom-width: 1px !important;
+			}
+		</style>
+
 	</head>
 	<body data-plugin-page-transition>
 		<div class="body">
@@ -157,6 +174,12 @@
 		</script>
 
 		<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+		{{-- DataTables --}}
+		<script src="//cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/3.3.0/js/dataTables.fixedColumns.min.js"></script>
+        <script src="{{ url('') }}/plugins/dataTables/dataTables.checkboxes.min.js"></script>
 
 		@yield('footerScripts')
 </body>

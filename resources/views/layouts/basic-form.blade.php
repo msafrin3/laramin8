@@ -37,11 +37,13 @@
             success: function(response) {
                 console.log(response);
                 if(response.success) {
+                    $("#modal_display").modal('toggle');
                     Swal.fire({
                         title: 'Success',
                         html: response.message,
                         icon: 'success'
                     });
+                    $("#maintable").DataTable().draw();
                 } else {
                     Swal.fire({
                         title: 'Error',
