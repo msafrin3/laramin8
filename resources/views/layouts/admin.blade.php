@@ -140,6 +140,20 @@
 			function toggleTheme() {
 				$("html").toggleClass("dark");
 			}
+
+			function setTheme(theme) {
+				$.ajax({
+					url: "{{ url('setTheme') }}",
+					type: "POST",
+					data: "_token={{ csrf_token() }}&theme=" + theme,
+					success: function(response) {
+						console.log(response);
+					},
+					error: function(err) {
+						console.log(err);
+					}
+				});
+			}
 		</script>
 
 		<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>

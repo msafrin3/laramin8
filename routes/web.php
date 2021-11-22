@@ -20,6 +20,7 @@ Auth::routes();
 
 Route::group(['middleware' => 'auth'], function() {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::post('/setTheme', [App\Http\Controllers\SettingController::class, 'setTheme'])->name('setTheme');
 
     Route::get('admin', function() {
         return redirect('admin/home');
