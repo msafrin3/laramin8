@@ -1,12 +1,17 @@
-
 <?php
 
 $app = new App();
 
 echo $app->renderMenu(config('porto.menu'));
 
-?>
 
+?>
+<li>
+    <a href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit()">Logout</a>
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+        @csrf
+    </form>
+</li>
 <?php
 
     class App {
@@ -16,7 +21,7 @@ echo $app->renderMenu(config('porto.menu'));
         public function renderMenu($menu) {
             foreach($menu as $m) {
                 $this->mainmenu .= '<li class="dropdown">'.
-                    '<a class="'.(isset($m['submenu']) ? 'dropdown-item dropdown-toggle' : '').'" href="index.html">'. (isset($m['title']) ? $m['title'] : '') .'</a>'.
+                    '<a class="'.(isset($m['submenu']) ? 'dropdown-item dropdown-toggle' : '').' '.$this->checkActive($m['url']).'" href="'.url($m['url']).'">'. (isset($m['title']) ? $m['title'] : '') .'</a>'.
                     (isset($m['submenu']) ? '<ul class="dropdown-menu">'. $this->renderSubMenu($m['submenu']) .'</ul>' : '').
                 '</li>';
             }
@@ -27,11 +32,19 @@ echo $app->renderMenu(config('porto.menu'));
             $_submenu = '';
             foreach($menu as $m) {
                 $_submenu .= '<li class="'.(isset($m['submenu']) ? 'dropdown-submenu' : '').'">'.
-                    '<a class="dropdown-item" href="index.html">'. $m['title'] .'</a>'.
+                    '<a class="dropdown-item '.$this->checkActive($m['url']).'" href="'.url($m['url']).'">'. $m['title'] .'</a>'.
                     (isset($m['submenu']) ? '<ul class="dropdown-menu">'. $this->renderSubMenu($m['submenu']) .'</ul>' : '').
                 '</li>';
             }
             return $_submenu;
+        }
+
+        public function checkActive($path) {
+            if(Request::is($path) || Request::is($path.'/*')) {
+                return 'active';
+            } else {
+                return '';
+            }
         }
 
     }

@@ -8,33 +8,51 @@ return [
         ],
         [
             'title' => 'Getting started',
-            'url' => '/admin'
+            'url' => 'admin/home'
         ],
         [
             'title' => 'Permission Management',
-            'url' => '#',
+            'url' => 'admin/permission'
+        ],
+        [
+            'title' => 'Role Management',
+            'url' => 'admin/role',
             'submenu' => [
                 [
-                    'title' => 'List Permission',
-                    'url' => '/admin/permission'
+                    'title' => 'List Role',
+                    'url' => 'admin/role'
                 ],
                 [
-                    'title' => 'Add New Permission',
-                    'url' => '/admin/permission/add'
+                    'title' => 'Add new Role',
+                    'url' => 'admin/role/add'
                 ]
             ]
         ],
         [
-            'title' => 'Role Management',
-            'url' => '#',
+            'title' => 'Meta',
+            'url' => 'admin/meta',
             'submenu' => [
                 [
-                    'title' => 'List Role',
-                    'url' => '/admin/role'
+                    'title' => 'List Meta',
+                    'url' => 'admin/meta'
                 ],
                 [
-                    'title' => 'Add new Role',
-                    'url' => '/admin/role/add'
+                    'title' => 'Add new Meta',
+                    'url' => 'admin/meta/add'
+                ]
+            ]
+        ],
+        [
+            'title' => 'Meta Data',
+            'url' => 'admin/metadata',
+            'submenu' => [
+                [
+                    'title' => 'List Metadata',
+                    'url' => 'admin/metadata'
+                ],
+                [
+                    'title' => 'Add Metadata',
+                    'url' => 'admin/metadata/add'
                 ]
             ]
         ]

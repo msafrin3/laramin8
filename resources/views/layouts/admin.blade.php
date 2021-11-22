@@ -7,7 +7,7 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">	
 
-		<title>Porto - Responsive HTML5 Template</title>	
+		<title>LA8 - @yield('title')</title>	
 
 		<meta name="keywords" content="HTML5 Template" />
 		<meta name="description" content="Porto - Responsive HTML5 Template">
@@ -70,7 +70,7 @@
 						<div class="header-column flex-row flex-lg-column justify-content-center h-100">
 							<div class="header-row flex-row justify-content-start justify-content-lg-center py-lg-5">
 								<div class="header-logo">
-									<a href="index.html">
+									<a href="{{ url('admin') }}">
 										{{-- <img alt="Porto" width="100" height="48" src="{{ url('') }}/porto/img/logo-default-slim.png"> --}}
 										Laravel Admin 8
 									</a>
@@ -88,15 +88,7 @@
 								</div>
 							</div>
 							<div class="header-row justify-content-end pb-lg-3">
-								<ul class="header-social-icons social-icons d-none d-sm-block social-icons-clean d-sm-0">
-									<li class="social-icons-facebook"><a href="https://www.facebook.com/" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a></li>
-									<li class="social-icons-twitter"><a href="https://www.twitter.com/" target="_blank" title="Twitter"><i class="fab fa-twitter"></i></a></li>
-									<li class="social-icons-linkedin"><a href="https://www.linkedin.com/" target="_blank" title="Linkedin"><i class="fab fa-linkedin-in"></i></a></li>
-								</ul>
-								<p class="d-none d-lg-block text-1 pt-3">© 2021 PORTO. All rights reserved</p>
-								<button class="btn header-btn-collapse-nav" data-bs-toggle="collapse" data-bs-target=".header-nav-main nav">
-									<i class="fas fa-bars"></i>
-								</button>
+								<button type="button" class="btn btn-block btn-primary" onclick="toggleTheme()"><i class="fa fa-moon"></i></button>
 							</div>
 						</div>
 					</div>
@@ -142,6 +134,16 @@
 		<!-- Theme Initialization Files -->
 		<script src="{{ url('') }}/porto/js/theme.init.js"></script>
 
-	<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v64f9daad31f64f81be21cbef6184a5e31634941392597" integrity="sha512-gV/bogrUTVP2N3IzTDKzgP0Js1gg4fbwtYB6ftgLbKQu/V8yH2+lrKCfKHelh4SO3DPzKj4/glTO+tNJGDnb0A==" data-cf-beacon='{"rayId":"6b05eb8d6aaa28a7","version":"2021.11.0","r":1,"token":"03fa3b9eb60b49789931c4694c153f9b","si":100}' crossorigin="anonymous"></script>
+		<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v64f9daad31f64f81be21cbef6184a5e31634941392597" integrity="sha512-gV/bogrUTVP2N3IzTDKzgP0Js1gg4fbwtYB6ftgLbKQu/V8yH2+lrKCfKHelh4SO3DPzKj4/glTO+tNJGDnb0A==" data-cf-beacon='{"rayId":"6b05eb8d6aaa28a7","version":"2021.11.0","r":1,"token":"03fa3b9eb60b49789931c4694c153f9b","si":100}' crossorigin="anonymous"></script>
+
+		<script>
+			function toggleTheme() {
+				$("html").toggleClass("dark");
+			}
+		</script>
+
+		<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+		@yield('footerScripts')
 </body>
 </html>

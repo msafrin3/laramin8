@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+@section('title', 'Welcome to Laravel Admin 8')
 @section('content')
 
     <div class="container mb-5 pb-4">
