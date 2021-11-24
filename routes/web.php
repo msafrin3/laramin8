@@ -41,4 +41,12 @@ Route::group(['middleware' => 'auth'], function() {
     Route::post('admin/role/add', [App\Http\Controllers\AdminController::class, 'roleStore'])->name('admin.role.store');
     Route::get('admin/role/edit/{role}', [App\Http\Controllers\AdminController::class, 'roleEdit'])->name('admin.role.edit');
     Route::post('admin/role/edit/{role}', [App\Http\Controllers\AdminController::class, 'roleUpdate'])->name('admin.role.update');
+
+    Route::get('admin/meta', [App\Http\Controllers\AdminController::class, 'meta'])->name('admin.meta');
+    Route::post('admin/meta/list', [App\Http\Controllers\AdminController::class, 'metaGet'])->name('admin.meta.list');
+    Route::post('admin/meta/batch', [App\Http\Controllers\AdminController::class, 'metaBatch'])->name('admin.meta.batch');
+    Route::get('admin/meta/add', [App\Http\Controllers\AdminController::class, 'metaAdd'])->name('admin.meta.add');
+    Route::post('admin/meta/add', [App\Http\Controllers\AdminController::class, 'metaStore'])->name('admin.meta.store');
+    Route::get('admin/meta/edit/{meta}', [App\Http\Controllers\AdminController::class, 'metaEdit'])->name('admin.meta.edit');
+    Route::post('admin/meta/edit/{meta}', [App\Http\Controllers\AdminController::class, 'metaUpdate'])->name('admin.meta.update');
 });

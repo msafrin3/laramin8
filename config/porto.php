@@ -20,31 +20,11 @@ return [
         ],
         [
             'title' => 'Meta',
-            'url' => 'admin/meta',
-            'submenu' => [
-                [
-                    'title' => 'List Meta',
-                    'url' => 'admin/meta'
-                ],
-                [
-                    'title' => 'Add new Meta',
-                    'url' => 'admin/meta/add'
-                ]
-            ]
+            'url' => 'admin/meta'
         ],
         [
             'title' => 'Meta Data',
-            'url' => 'admin/metadata',
-            'submenu' => [
-                [
-                    'title' => 'List Metadata',
-                    'url' => 'admin/metadata'
-                ],
-                [
-                    'title' => 'Add Metadata',
-                    'url' => 'admin/metadata/add'
-                ]
-            ]
+            'url' => 'admin/metadata'
         ]
     ]
 ];

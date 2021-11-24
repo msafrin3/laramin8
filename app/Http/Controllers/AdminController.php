@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Permission;
+use App\Models\Meta;
+use App\Models\Metadata;
 
 class AdminController extends Controller
 {
@@ -26,7 +28,7 @@ class AdminController extends Controller
         $data['breadcrumb'] = array(
             array(
                 'title' => 'Home',
-                'url' => 'admin',
+                'url' => '/admin',
                 'active' => false
             ),
             array(
@@ -246,7 +248,7 @@ class AdminController extends Controller
         $data['breadcrumb'] = array(
             array(
                 'title' => 'Home',
-                'url' => 'admin',
+                'url' => '/admin',
                 'active' => false
             ),
             array(
@@ -286,7 +288,14 @@ class AdminController extends Controller
                 'class' => 'text-center'
             )
         );
-        $data['actions'] = [];
+        $data['actions'] = array(
+            array(
+                'id' => 'delete',
+                'label' => 'Delete',
+                'message' => 'Are you sure want to delete selected role',
+                'route' => route('admin.role.batch')
+            )
+        );
         $data['batch_route'] = route('admin.role.batch');
         $data['buttons'] = array(
             array(
@@ -322,7 +331,22 @@ class AdminController extends Controller
     }
 
     public function roleBatch(Request $request) {
-        //
+        try {
+            $message = '';
+            if($request['action'] == 'delete') {
+                // delete roles attached to user
+                DB::table('role_user')->whereIn('role_id', $request['ids'])->delete();
+                // delete roles attached to permission
+                DB::table('permission_role')->whereIn('role_id', $request['ids'])->delete();
+                // delete role
+                Role::whereIn('id', $request['ids'])->delete();
+                $message = 'Role successfully deleted';
+            }
+
+            return response()->json(['success' => true, 'message' => $message]);
+        } catch(\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
     }
 
     public function roleAdd() {
@@ -454,6 +478,112 @@ class AdminController extends Controller
         );
         
         return view('layouts.basic-form', $data);
+    }
+
+    public function meta() {
+        $data['title'] = 'Meta Management';
+        $data['breadcrumb'] = array(
+            array(
+                'title' => 'Home',
+                'url' => '/admin',
+                'active' => false
+            ),
+            array(
+                'title' => 'Meta Management',
+                'url' => '',
+                'active' => true
+            )
+        );
+        $data['datatable_route'] = route('admin.meta.list');
+        $data['batch_route'] = route('admin.meta.batch');
+        $data['columns'] = array(
+            array(
+                'dt' => 'id',
+                'label' => 'id'
+            ),
+            array(
+                'dt' => 'name',
+                'label' => 'Name'
+            ),
+            array(
+                'dt' => 'display_name',
+                'label' => 'Display Name'
+            )
+        );
+        $data['buttons'] = array(
+            array(
+                'id' => 'addmeta',
+                'label' => 'Add new Meta',
+                'icon' => 'fa-plus-circle',
+                'class' => 'btn-primary',
+                'modal' => true,
+                'link' => route('admin.meta.add')
+            )
+        );
+        $data['actions'] = array(
+            array(
+                'id' => 'delete',
+                'label' => 'Delete',
+                'message' => 'Are you sure want to delete this Meta',
+                'route' => route('admin.meta.batch')
+            )
+        );
+
+        return view('layouts.datatable', $data);
+    }
+
+    public function metaGet(Request $request) {
+        $metas = DB::table('meta');
+
+        return DataTables::of($metas)
+            ->make(true);
+    }
+
+    public function metaAdd() {
+        $data['title'] = 'Add New Meta';
+        $data['posturl'] = route('admin.meta.add');
+        $data['forms'] = array(
+            array(
+                'label' => 'Name',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'text',
+                    'name' => 'name',
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter name',
+                    'required' => 'required'
+                )
+            ),
+            array(
+                'label' => 'Display Name',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'text',
+                    'name' => 'display_name',
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter display name',
+                    'required' => 'required'
+                )
+            )
+        );
+        return view('layouts.basic-form', $data);
+    }
+
+    public function metaStore(Request $request) {
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|unique:meta'
+            ]);
+            if($validator->fails()) {
+                return response()->json(['success' => false, 'message' => $validator->errors()->first()]);
+            }
+
+            $data = $request->except(['_token']);
+            Meta::create($data);
+            return response()->json(['success' => true, 'message' => 'Meta successfully created.']);
+        } catch(\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
     }
 
 }
