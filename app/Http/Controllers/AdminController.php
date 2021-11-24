@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 use App\Models\User;
 use App\Models\Role;
@@ -276,10 +277,27 @@ class AdminController extends Controller
                 'label' => 'Permissions',
                 'searchable' => false,
                 'orderable' => false
+            ),
+            array(
+                'dt' => 'actions',
+                'label' => 'Actions',
+                'searchable' => false,
+                'orderable' => false,
+                'class' => 'text-center'
             )
         );
         $data['actions'] = [];
         $data['batch_route'] = route('admin.role.batch');
+        $data['buttons'] = array(
+            array(
+                'id' => 'addrole',
+                'label' => 'Add Role',
+                'class' => 'btn-primary',
+                'icon' => 'fa-plus-circle',
+                'modal' => true,
+                'link' => route('admin.role.add')
+            )
+        );
 
         return view('layouts.datatable', $data);
     }
@@ -288,11 +306,154 @@ class AdminController extends Controller
         $roles = DB::table('roles');
 
         return DataTables::of($roles)
+            ->editColumn('permissions', function($query) {
+                $role = Role::find($query->id);
+                $html = '';
+                foreach($role->permissions as $permission) {
+                    $html .= '<span class="badge badge-tertiary rounded-pill py-1 px-2 me-1 text-uppercase">'. $permission->display_name .'</span>';
+                }
+                return $html;
+            })
+            ->editColumn('actions', function($query) {
+                return '<button type="button" class="btn btn-quaternary btn-sm displayModal" data-modal_url="'. route('admin.role.edit', $query->id) .'">Edit</button>';
+            })
+            ->rawColumns(['permissions', 'actions'])
             ->make(true);
     }
 
     public function roleBatch(Request $request) {
         //
+    }
+
+    public function roleAdd() {
+        $data['title'] = 'Add Role';
+        $data['posturl'] = route('admin.role.store');
+
+        $permission_list = Permission::all()->toArray();
+
+        $data['forms'] = array(
+            array(
+                'label' => 'Name',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'text',
+                    'name' => 'name',
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter Name',
+                    'required' => 'required'
+                )
+            ),
+            array(
+                'label' => 'Display Name',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'text',
+                    'name' => 'display_name',
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter display name',
+                    'required' => 'required'
+                )
+            ),
+            array(
+                'label' => 'Description',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'text',
+                    'name' => 'description',
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter role description',
+                    'required' => 'required'
+                )
+            ),
+            array(
+                'label' => 'Permissions',
+                'type' => 'checkbox',
+                'name' => 'permissions',
+                'options' => $permission_list
+            )
+        );
+        return view('layouts.basic-form', $data);
+    }
+
+    public function roleStore(Request $request) {
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|unique:roles'
+            ]);
+
+            if($validator->fails()) {
+                return response()->json(['success' => false, 'message' => $validator->errors()->first()]);
+            }
+            
+            $data = $request->except(['permissions']);
+
+            $role = Role::create($data);
+            $role->attachPermissions($request->input('permissions'));
+
+            return response()->json(['success' => true, 'message' => 'Role Created']);
+        } catch(\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function roleEdit(Role $role) {
+        $data['title'] = 'Edit Role';
+        $data['posturl'] = route('admin.role.update', $role->id);
+        $permission_list = DB::table('permissions')->select([
+            'permissions.*',
+            DB::raw("if(permission_role.permission_id is not null, 1, null) as is_checked")
+        ])
+        ->leftJoin('permission_role', function($join) use ($role) {
+            $join->on('permissions.id', 'permission_role.permission_id');
+            $join->on('permission_role.role_id', DB::raw($role->id));
+        })->get();
+        
+        $data['forms'] = array(
+            array(
+                'label' => 'Name',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'text',
+                    'name' => 'name',
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter Name',
+                    'required' => 'required',
+                    'value' => $role->name
+                )
+            ),
+            array(
+                'label' => 'Display Name',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'text',
+                    'name' => 'display_name',
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter display name',
+                    'required' => 'required',
+                    'value' => $role->display_name
+                )
+            ),
+            array(
+                'label' => 'Description',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'text',
+                    'name' => 'description',
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter role description',
+                    'required' => 'required',
+                    'value' => $role->description
+                )
+            ),
+            array(
+                'label' => 'Permissions',
+                'type' => 'checkbox',
+                'name' => 'permissions',
+                'options' => json_decode(json_encode($permission_list), true)
+            )
+        );
+        
+        return view('layouts.basic-form', $data);
     }
 
 }

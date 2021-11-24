@@ -13,6 +13,19 @@
                     {{ $attr_label }}="{{ $attr_value }}"
                     @endforeach
                 >
+                @elseif($form['type'] == 'checkbox')
+                    @foreach($form['options'] as $option)
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" 
+                        name="{{ $form['name'] }}[]" 
+                        value="{{ $option['id'] }}" 
+                        id="check{{ $option['id'] }}" 
+                        @isset($option['is_checked']) checked="checked" @endisset>
+                        <label class="form-check-label" for="check{{ $option['id'] }}">
+                            {{ $option['name'] }}
+                        </label>
+                    </div>
+                    @endforeach
                 @endif
             </div>
         </div>

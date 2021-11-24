@@ -37,4 +37,8 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('admin/role', [App\Http\Controllers\AdminController::class, 'role'])->name('admin.role');
     Route::post('admin/role/list', [App\Http\Controllers\AdminController::class, 'roleGet'])->name('admin.role.list');
     Route::post('admin/role/batch', [App\Http\Controllers\AdminController::class, 'roleBatch'])->name('admin.role.batch');
+    Route::get('admin/role/add', [App\Http\Controllers\AdminController::class, 'roleAdd'])->name('admin.role.add');
+    Route::post('admin/role/add', [App\Http\Controllers\AdminController::class, 'roleStore'])->name('admin.role.store');
+    Route::get('admin/role/edit/{role}', [App\Http\Controllers\AdminController::class, 'roleEdit'])->name('admin.role.edit');
+    Route::post('admin/role/edit/{role}', [App\Http\Controllers\AdminController::class, 'roleUpdate'])->name('admin.role.update');
 });
