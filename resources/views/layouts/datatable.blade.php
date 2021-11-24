@@ -22,25 +22,37 @@
                 List {{ $title }}
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-2">
-                        <input type="text" class="form-control" placeholder="Search..">
+                <form id="formfilter">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <input type="text" id="searchinput" class="form-control" placeholder="Search..">
+                        </div>
+                        @foreach($columns as $column)
+                            @isset($column['filter'])
+                            <div class="col-md-2">
+                                <select class="form-control _filter" id="{{ $column['dt'] }}_filter">
+                                    @foreach($column['filter']['value'] as $option)
+                                    <option value="{{ $option['id'] }}">{{ $option['name'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @endisset
+                        @endforeach
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-primary" id="btn_reset">Reset</button>
+                        </div>
                     </div>
-                    <div class="col-md-2">
-                        <select class="form-control">
-                            <option value="">Select something</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="button" class="btn btn-primary">Reset</button>
-                    </div>
-                </div>
+                </form>
                 <div class="row mt-2 mb-4">
                     <div class="col-md-2">
                         <input type="hidden" id="selectedrows" name="selectedrows" value="">
                         <select name="action" class="form-control" id="action" style="display: none">
                             <option value="" selected="selected">Select Action</option>
-                            <option value="">Delete</option>
+                            @isset($actions)
+                                @foreach($actions as $action)
+                                <option value="{{ $action['id'] }}">{{ $action['label'] }}</option>
+                                @endforeach
+                            @endisset
                         </select>
                     </div>
                 </div>
@@ -115,6 +127,7 @@
                         visible : {{ isset($column['visible']) && $column['visible'] == false ? 'false' : 'true' }},
                         searchable : {{ isset($column['searchable']) ? 'false' : 'true' }} ,
                         orderable : {{ isset($column['orderable']) ? 'false' : 'true' }} ,
+                        className: @isset($column['class']) "{{ $column['class'] }}" @else "" @endisset
                     },
                     @endforeach
                 ]
@@ -139,6 +152,47 @@
                 $('#formfilter').get(0).reset();
                 var table = $('#maintable').DataTable();
                 table.search('').columns().search('').draw();
+            });
+
+            // Handle form submission event 
+            $("#action").on("change", function(e) {
+                var msg = '';
+                @foreach($actions as $action)
+                    if($("#action").val() == "{{ $action['id'] }}") {
+                        msg = "{{ $action['message'] }}";
+                    }
+                @endforeach
+                if(confirm(msg)) {
+                    var rows_selected = $("#selectedrows").val();
+                    var page = "{{ url($batch_route) }}";
+                    var data = {
+                        _token: "{{ csrf_token() }}",
+                        action: $("#action").val(),
+                        ids: rows_selected.split(","),
+                        row_info: row_info()
+                    }
+                    
+                    $.post(page, data, 'json')
+                    .done(function(response) {
+                        console.log(response);
+                        if(response.success) {
+                            Swal.fire({
+                                title: 'Success',
+                                html: response.message,
+                                icon: 'success'
+                            });
+                            $("#action").val('');
+                        } else {
+                            Swal.fire({
+                                title: 'Error',
+                                html: response.message,
+                                icon: 'error'
+                            })
+                        }
+                        $("#maintable").DataTable().draw();
+                        $("#action").val('');
+                    });
+                }
             });
         });
 

@@ -17,7 +17,8 @@ html {
 }
 
 body {
-	background-color: #FFF;
+	/* background-color: #FFF; */
+	background-color: #f7f7f7;
 	color: #777;
 	font-family: "Poppins", Arial, sans-serif;
 	font-size: 14px;
@@ -30,7 +31,7 @@ body a {
 }
 
 .body {
-	background-color: #FFF;
+	/* background-color: #FFF; */
 }
 
 html.safari:not(.no-safari-overflow-x-fix) .body {

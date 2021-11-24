@@ -7,8 +7,12 @@
         <div class="form-group row">
             <label class="col-md-3 col-form-label">{{ $form['label'] }}</label>
             <div class="col-md-9">
-                @if($form['type'] == 'text')
-                <input type="text" name="{{ $form['name'] }}" class="form-control" placeholder="{{ $form['placeholder'] }}" @if($form['required']) required @endif>
+                @if($form['type'] == 'input')
+                <input
+                    @foreach($form['attributes'] as $attr_label => $attr_value)
+                    {{ $attr_label }}="{{ $attr_value }}"
+                    @endforeach
+                >
                 @endif
             </div>
         </div>

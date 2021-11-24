@@ -16,17 +16,7 @@ return [
         ],
         [
             'title' => 'Role Management',
-            'url' => 'admin/role',
-            'submenu' => [
-                [
-                    'title' => 'List Role',
-                    'url' => 'admin/role'
-                ],
-                [
-                    'title' => 'Add new Role',
-                    'url' => 'admin/role/add'
-                ]
-            ]
+            'url' => 'admin/role'
         ],
         [
             'title' => 'Meta',
