@@ -7,14 +7,9 @@
 1. <b>User Management</b> - As we all know that most of the application require a user management panel. That's where we think that this could help the developers to build their own ideas much faster.
 2. <b>Role Based Access Control (RBAC)</b> - One of the most important features that required in every development is a role management. Now that could be solved in <b>Laramin</b> as we served the most basic need to control the access of the users.
 3. <b>Interactive & Beautiful Interface</b> - UI/UX is the most important element in any application development as that is the first thing that people will see which bring us to make sure that user have the best experience in our product. <b>Laramin</b> is using [Porto Template](https://themeforest.net/item/porto-responsive-html5-template/4106987) as our main UI template because it has almost everything we need in our application.
-4. <b>Dynamic View</b> - 
-
-
-- Basic User management.
-- Role based access control (RBAC) installed.
-- Permission Control.
-- Interactive & Beautiful Template.
-- Dynamic view
+4. <b>Dynamic Blade</b> - As a Laravel developers, most common issue we're facing is there's too many view file created for specific module which make the development period much longer. Well, with <b>Laramin</b>, we've created several template page suitable for few condition such as:
+	- <b>Table View</b> - page where we list out the data that we want for example list of users or list of post. This include integration with [Yajra Datatables](https://yajrabox.com/docs/laravel-datatables/master/installation) to give user the experience in managing the data
+	- <b>Form View</b> - Creating a form is so much time consuming, as a developers, forms is the most common element that we must facing, so we created an object driven pre-defined template for the developers to produce the form without any concern about the design. <b>Laramin</b> will do it for u. Just fill up few informations and.. <i>Voilà!!</i>
 
 ## Package Included
 
