@@ -49,4 +49,12 @@ Route::group(['middleware' => 'auth'], function() {
     Route::post('admin/meta/add', [App\Http\Controllers\AdminController::class, 'metaStore'])->name('admin.meta.store');
     Route::get('admin/meta/edit/{meta}', [App\Http\Controllers\AdminController::class, 'metaEdit'])->name('admin.meta.edit');
     Route::post('admin/meta/edit/{meta}', [App\Http\Controllers\AdminController::class, 'metaUpdate'])->name('admin.meta.update');
+
+    Route::get('admin/metadata', [App\Http\Controllers\AdminController::class, 'metadata'])->name('admin.metadata');
+    Route::post('admin/metadata/list', [App\Http\Controllers\AdminController::class, 'metadataGet'])->name('admin.metadata.list');
+    Route::post('admin/metadata/batch', [App\Http\Controllers\AdminController::class, 'metadataBatch'])->name('admin.metadata.batch');
+    Route::get('admin/metadata/add', [App\Http\Controllers\AdminController::class, 'metadataAdd'])->name('admin.metadata.add');
+    Route::post('admin/metadata/add', [App\Http\Controllers\AdminController::class, 'metadataStore'])->name('admin.metadata.store');
+    Route::get('admin/metadata/edit/{metadata}', [App\Http\Controllers\AdminController::class, 'metadataEdit'])->name('admin.metadata.edit');
+    Route::post('admin/metadata/edit/{metadata}', [App\Http\Controllers\AdminController::class, 'metadataUpdate'])->name('admin.metadata.update');
 });

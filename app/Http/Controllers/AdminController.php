@@ -73,6 +73,14 @@ class AdminController extends Controller
                 'label' => 'Description'
             ),
             array(
+                'dt' => 'created_at',
+                'label' => 'Created At'
+            ),
+            array(
+                'dt' => 'updated_at',
+                'label' => 'Updated At'
+            ),
+            array(
                 'dt' => 'action',
                 'label' => 'Action',
                 'searchable' => false,
@@ -279,6 +287,14 @@ class AdminController extends Controller
                 'label' => 'Permissions',
                 'searchable' => false,
                 'orderable' => false
+            ),
+            array(
+                'dt' => 'created_at',
+                'label' => 'Created At'
+            ),
+            array(
+                'dt' => 'updated_at',
+                'label' => 'Updated At'
             ),
             array(
                 'dt' => 'actions',
@@ -508,6 +524,21 @@ class AdminController extends Controller
             array(
                 'dt' => 'display_name',
                 'label' => 'Display Name'
+            ),
+            array(
+                'dt' => 'created_at',
+                'label' => 'Created At'
+            ),
+            array(
+                'dt' => 'updated_at',
+                'label' => 'Updated At'
+            ),
+            array(
+                'dt' => 'actions',
+                'label' => 'Actions',
+                'searchable' => false,
+                'orderable' => false,
+                'class' => 'text-center'
             )
         );
         $data['buttons'] = array(
@@ -536,12 +567,16 @@ class AdminController extends Controller
         $metas = DB::table('meta');
 
         return DataTables::of($metas)
+            ->editColumn('actions', function($query) {
+                return '<button type="button" class="btn btn-quaternary btn-sm displayModal" data-modal_url="'. route('admin.meta.edit', $query->id) .'">Edit</button>';
+            })
+            ->rawColumns(['actions'])
             ->make(true);
     }
 
     public function metaAdd() {
         $data['title'] = 'Add New Meta';
-        $data['posturl'] = route('admin.meta.add');
+        $data['posturl'] = route('admin.meta.store');
         $data['forms'] = array(
             array(
                 'label' => 'Name',
@@ -581,6 +616,290 @@ class AdminController extends Controller
             $data = $request->except(['_token']);
             Meta::create($data);
             return response()->json(['success' => true, 'message' => 'Meta successfully created.']);
+        } catch(\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function metaEdit(Meta $meta) {
+        $data['title'] = 'Edit Meta';
+        $data['posturl'] = route('admin.meta.update', $meta->id);
+        $data['forms'] = array(
+            array(
+                'label' => 'Name',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'text',
+                    'name' => 'name',
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter name',
+                    'required' => 'required',
+                    'value' => $meta->name
+                )
+            ),
+            array(
+                'label' => 'Display Name',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'text',
+                    'name' => 'display_name',
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter display name',
+                    'required' => 'required',
+                    'value' => $meta->display_name
+                )
+            )
+        );
+        return view('layouts.basic-form', $data);
+    }
+
+    public function metaUpdate(Meta $meta, Request $request) {
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|unique:meta,name,'.$meta->id
+            ]);
+            if($validator->fails()) {
+                return response()->json(['success' => false, 'message' => $validator->errors()->first()]);
+            }
+
+            $meta->update($request->all());
+
+            return response()->json(['success' => true, 'message' => 'Meta Successfully updated!']);
+        } catch(\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function metaBatch(Request $request) {
+        try {
+            $message = '';
+            if($request['action'] == 'delete') {
+                Metadata::whereIn('meta_id', $request['ids'])->delete();
+                Meta::whereIn('id', $request['ids'])->delete();
+                $message = 'Meta Successfully deleted!';
+            }
+
+            return response()->json(['success' => true, 'message' => $message]);
+        } catch(\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function metadata() {
+        $data['title'] = 'Meta Data Management';
+        $data['datatable_route'] = route('admin.metadata.list');
+        $data['batch_route'] = route('admin.metadata.batch');
+        $data['breadcrumb'] = array(
+            array(
+                'title' => 'Home',
+                'url' => '/admin',
+                'active' => false
+            ),
+            array(
+                'title' => 'Meta Management',
+                'url' => '/admin/meta',
+                'active' => false
+            ),
+            array(
+                'title' => 'Meta Data Management',
+                'url' => '/admin/metadata',
+                'active' => true
+            )
+        );
+        $data['actions'] = array(
+            array(
+                'id' => 'delete',
+                'label' => 'Delete',
+                'message' => 'Are you sure want to delete selected Meta Data?'
+            )
+        );
+        $data['columns'] = array(
+            array(
+                'dt' => 'id',
+                'label' => 'id'
+            ),
+            array(
+                'dt' => 'meta_name',
+                'label' => 'Meta'
+            ),
+            array(
+                'dt' => 'value',
+                'label' => 'Value'
+            ),
+            array(
+                'dt' => 'group_helper',
+                'label' => 'Group Helper'
+            ),
+            array(
+                'dt' => 'created_at',
+                'label' => 'Created At'
+            ),
+            array(
+                'dt' => 'updated_at',
+                'label' => 'Updated At'
+            ),
+            array(
+                'dt' => 'actions',
+                'label' => 'Actions',
+                'searchable' => false,
+                'orderable' => false,
+                'class' => 'text-center'
+            )
+        );
+        
+        $data['buttons'] = array(
+            array(
+                'id' => 'addmetadata',
+                'label' => 'Add Meta Data',
+                'class' => 'btn-primary',
+                'icon' => 'fa-plus-circle',
+                'modal' => true,
+                'link' => route('admin.metadata.add')
+            )
+        );
+        return view('layouts.datatable', $data);
+    }
+
+    public function metadataGet(Request $request) {
+        $model = DB::table('meta_data')->select([
+            'meta_data.*',
+            'meta.name as meta_name'
+        ])
+        ->leftJoin('meta', 'meta_data.meta_id', 'meta.id');
+
+        return DataTables::of($model)
+            ->editColumn('actions', function($query) {
+                return '<button type="button" class="btn btn-quaternary btn-sm displayModal" data-modal_url="'. route('admin.metadata.edit', $query->id) .'">Edit</button>';
+            })
+            ->rawColumns(['actions'])
+            ->make(true);
+    }
+
+    public function metadataAdd() {
+        $data['title'] = 'Add new Meta Data';
+        $data['posturl'] = route('admin.metadata.store');
+        $meta_list = Meta::all()->toArray();
+        array_unshift($meta_list, array('id' => '', 'name' => 'Select Meta'));
+        $data['forms'] = array(
+            array(
+                'label' => 'Select Meta',
+                'type' => 'dropdown',
+                'attributes' => array(
+                    'name' => 'meta_id',
+                    'class' => 'form-control',
+                    'required' => 'required'
+                ),
+                'options' => $meta_list
+            ),
+            array(
+                'label' => 'Value',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'text',
+                    'name' => 'value',
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter Value',
+                    'required' => 'required'
+                )
+            ),
+            array(
+                'label' => 'Group Helper',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'text',
+                    'name' => 'group_helper',
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter group helper'
+                )
+            )
+        );
+
+        return view('layouts.basic-form', $data);
+    }
+
+    public function metadataStore(Request $request) {
+        try {
+            Metadata::create($request->all());
+            return response()->json(['success' => true, 'message' => 'Meta Data Successfully created!']);
+        } catch(\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function metadataEdit(Metadata $metadata) {
+        $data['title'] = 'Edit Meta Data';
+        $data['posturl'] = route('admin.metadata.update', $metadata->id);
+        // $meta_list = Meta::all()->toArray();
+        // array_unshift($meta_list, array('id' => '', 'name' => 'Select Meta'));
+        $meta_list = DB::table('meta')->select([
+            'meta.*',
+            DB::raw("if(meta_data.id is not null, 1, 0) as is_checked")
+        ])
+        ->leftJoin('meta_data', function($join) use ($metadata) {
+            $join->on('meta.id', 'meta_data.meta_id');
+            $join->on('meta_data.id', DB::raw($metadata->id));
+        })
+        ->get();
+        $meta_list = json_decode(json_encode($meta_list), true);
+        array_unshift($meta_list, array('id' => '', 'name' => 'Select Meta'));
+        
+        $data['forms'] = array(
+            array(
+                'label' => 'Select Meta',
+                'type' => 'dropdown',
+                'attributes' => array(
+                    'name' => 'meta_id',
+                    'class' => 'form-control',
+                    'required' => 'required'
+                ),
+                'options' => $meta_list
+            ),
+            array(
+                'label' => 'Value',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'text',
+                    'name' => 'value',
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter Value',
+                    'required' => 'required',
+                    'value' => $metadata->value
+                )
+            ),
+            array(
+                'label' => 'Group Helper',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'text',
+                    'name' => 'group_helper',
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter group helper',
+                    'value' => $metadata->group_helper
+                )
+            )
+        );
+
+        return view('layouts.basic-form', $data);
+    }
+
+    public function metadataUpdate(Metadata $metadata, Request $request) {
+        try {
+            $metadata->update($request->all());
+            return response()->json(['success' => true, 'message' => 'Meta Data successfully updated.']);
+        } catch(\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function metadataBatch(Request $request) {
+        try {
+            $message = '';
+            if($request['action'] == 'delete') {
+                Metadata::whereIn('id', $request['ids'])->delete();
+                $message = 'Meta Data successfully deleted!';
+            }
+
+            return response()->json(['success' => true, 'message' => $message]);
         } catch(\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }

@@ -20,12 +20,22 @@
                         name="{{ $form['name'] }}[]" 
                         value="{{ $option['id'] }}" 
                         id="check{{ $option['id'] }}" 
-                        @isset($option['is_checked']) checked="checked" @endisset>
+                        @isset($option['is_checked']) @if($option['is_checked'] == 1) checked="checked" @endif @endisset>
                         <label class="form-check-label" for="check{{ $option['id'] }}">
                             {{ $option['name'] }}
                         </label>
                     </div>
                     @endforeach
+                @elseif($form['type'] == 'dropdown')
+                    <select 
+                    @foreach($form['attributes'] as $attr_label => $attr_value)
+                    {{ $attr_label }}="{{ $attr_value }}"
+                    @endforeach
+                    >
+                        @foreach($form['options'] as $option)
+                        <option value="{{ $option['id'] }}" @isset($option['is_checked']) @if($option['is_checked'] == 1) selected @endif @endisset>{{ $option['name'] }}</option>
+                        @endforeach
+                    </select>
                 @endif
             </div>
         </div>
