@@ -905,4 +905,101 @@ class AdminController extends Controller
         }
     }
 
+    public function user() {
+        $data['title'] = 'User Management';
+        $data['datatable_route'] = route('admin.user.list');
+        $data['batch_route'] = route('admin.user.batch');
+        $data['breadcrumb'] = array(
+            array(
+                'title' => 'Home',
+                'url' => '/admin',
+                'active' => false
+            ),
+            array(
+                'title' => 'User Management',
+                'url' => '',
+                'active' => true
+            )
+        );
+        $data['buttons'] = array(
+            array(
+                'id' => 'adduser',
+                'label' => 'Add User',
+                'icon' => 'fa-user-plus',
+                'link' => route('admin.user.add'),
+                'class' => 'btn-primary'
+            )
+        );
+        $data['actions'] = array(
+            array(
+                'id' => 'deleteuser',
+                'label' => 'Delete User',
+                'message' => 'Are you sure want to delete selected user?'
+            )
+        );
+        $data['columns'] = array(
+            array(
+                'dt' => 'id',
+                'label' => 'id'
+            ),
+            array(
+                'dt' => 'name',
+                'label' => 'Name'
+            ),
+            array(
+                'dt' => 'email',
+                'label' => 'Email'
+            ),
+            array(
+                'dt' => 'roles',
+                'label' => 'Roles',
+                'searchable' => false,
+                'orderable' => false
+            ),
+            array(
+                'dt' => 'permissions',
+                'label' => 'Permissions',
+                'searchable' => false,
+                'orderable' => false
+            ),
+            array(
+                'dt' => 'created_at',
+                'label' => 'Created At'
+            ),
+            array(
+                'dt' => 'updated_at',
+                'label' => 'Updated At'
+            )
+        );
+
+        return view('layouts.datatable', $data);
+    }
+
+    public function userGet(Request $request) {
+        $users = DB::table('users')->get();
+        return DataTables::of($users)
+            ->editColumn('roles', function($query) {
+                $roles = '';
+                $user = User::find($query->id);
+                foreach($user->roles as $role) {
+                    $roles .= '<span class="badge badge-tertiary rounded-pill py-1 px-2 me-1 text-uppercase">'. $role->display_name .'</span>';
+                }
+                return $roles;
+            })
+            ->editColumn('permissions', function($query) {
+                $permissions = '';
+                $user = User::find($query->id);
+                foreach($user->permissions as $permission) {
+                    $permissions .= '<span class="badge badge-tertiary rounded-pill py-1 px-2 me-1 text-uppercase">'. $permission->display_name .'</span>';
+                }
+                return $permissions;
+            })
+            ->rawColumns(['roles', 'permissions'])
+            ->make(true);
+    }
+
+    public function userAdd() {
+        // to be continue...
+    }
+
 }

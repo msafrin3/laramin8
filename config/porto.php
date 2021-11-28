@@ -25,6 +25,10 @@ return [
         [
             'title' => 'Meta Data',
             'url' => 'admin/metadata'
+        ],
+        [
+            'title' => 'User Management',
+            'url' => 'admin/user'
         ]
     ]
 ];
