@@ -24,7 +24,7 @@ class AdminController extends Controller
     public function permission() {
         $data['title'] = 'Permission Management';
         $data['datatable_route'] = route('admin.permission.list');
-        $data['batch_route'] = route('admin.permission.batch');
+        $data['batch_route'] = route('admin.batch');
         $data['breadcrumb'] = array(
             array(
                 'title' => 'Home',
@@ -91,7 +91,7 @@ class AdminController extends Controller
 
         $data['actions'] = array(
             array(
-                'id' => 'delete',
+                'id' => 'deletepermission',
                 'label' => 'Delete',
                 'message' => 'Are you sure want to delete selected permission?',
                 'route' => url('admin/permission/batch')
@@ -177,23 +177,6 @@ class AdminController extends Controller
             })
             ->rawColumns(['action'])
             ->make(true);
-    }
-
-    public function permissionBatch(Request $request) {
-        try {
-            $message = '';
-            if($request['action'] == 'delete') {
-                // delete from permission_role
-                DB::table('permission_role')->whereIn('permission_id', $request['ids'])->delete();
-                DB::table('permission_user')->whereIn('permission_id', $request['ids'])->delete();
-                Permission::whereIn('id', $request['ids'])->delete();
-                $message = 'Permission(s) successfull deleted!';
-            }
-
-            return response()->json(['success' => true, 'message' => $message]);
-        } catch(\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
     }
 
     public function permissionEdit(Permission $permission) {
@@ -306,13 +289,13 @@ class AdminController extends Controller
         );
         $data['actions'] = array(
             array(
-                'id' => 'delete',
+                'id' => 'deleterole',
                 'label' => 'Delete',
                 'message' => 'Are you sure want to delete selected role',
                 'route' => route('admin.role.batch')
             )
         );
-        $data['batch_route'] = route('admin.role.batch');
+        $data['batch_route'] = route('admin.batch');
         $data['buttons'] = array(
             array(
                 'id' => 'addrole',
@@ -344,25 +327,6 @@ class AdminController extends Controller
             })
             ->rawColumns(['permissions', 'actions'])
             ->make(true);
-    }
-
-    public function roleBatch(Request $request) {
-        try {
-            $message = '';
-            if($request['action'] == 'delete') {
-                // delete roles attached to user
-                DB::table('role_user')->whereIn('role_id', $request['ids'])->delete();
-                // delete roles attached to permission
-                DB::table('permission_role')->whereIn('role_id', $request['ids'])->delete();
-                // delete role
-                Role::whereIn('id', $request['ids'])->delete();
-                $message = 'Role successfully deleted';
-            }
-
-            return response()->json(['success' => true, 'message' => $message]);
-        } catch(\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
     }
 
     public function roleAdd() {
@@ -511,7 +475,7 @@ class AdminController extends Controller
             )
         );
         $data['datatable_route'] = route('admin.meta.list');
-        $data['batch_route'] = route('admin.meta.batch');
+        $data['batch_route'] = route('admin.batch');
         $data['columns'] = array(
             array(
                 'dt' => 'id',
@@ -553,7 +517,7 @@ class AdminController extends Controller
         );
         $data['actions'] = array(
             array(
-                'id' => 'delete',
+                'id' => 'deletemeta',
                 'label' => 'Delete',
                 'message' => 'Are you sure want to delete this Meta',
                 'route' => route('admin.meta.batch')
@@ -670,25 +634,10 @@ class AdminController extends Controller
         }
     }
 
-    public function metaBatch(Request $request) {
-        try {
-            $message = '';
-            if($request['action'] == 'delete') {
-                Metadata::whereIn('meta_id', $request['ids'])->delete();
-                Meta::whereIn('id', $request['ids'])->delete();
-                $message = 'Meta Successfully deleted!';
-            }
-
-            return response()->json(['success' => true, 'message' => $message]);
-        } catch(\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
     public function metadata() {
         $data['title'] = 'Meta Data Management';
         $data['datatable_route'] = route('admin.metadata.list');
-        $data['batch_route'] = route('admin.metadata.batch');
+        $data['batch_route'] = route('admin.batch');
         $data['breadcrumb'] = array(
             array(
                 'title' => 'Home',
@@ -708,7 +657,7 @@ class AdminController extends Controller
         );
         $data['actions'] = array(
             array(
-                'id' => 'delete',
+                'id' => 'deletemetadata',
                 'label' => 'Delete',
                 'message' => 'Are you sure want to delete selected Meta Data?'
             )
@@ -891,24 +840,10 @@ class AdminController extends Controller
         }
     }
 
-    public function metadataBatch(Request $request) {
-        try {
-            $message = '';
-            if($request['action'] == 'delete') {
-                Metadata::whereIn('id', $request['ids'])->delete();
-                $message = 'Meta Data successfully deleted!';
-            }
-
-            return response()->json(['success' => true, 'message' => $message]);
-        } catch(\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
     public function user() {
         $data['title'] = 'User Management';
         $data['datatable_route'] = route('admin.user.list');
-        $data['batch_route'] = route('admin.user.batch');
+        $data['batch_route'] = route('admin.batch');
         $data['breadcrumb'] = array(
             array(
                 'title' => 'Home',
@@ -1224,7 +1159,7 @@ class AdminController extends Controller
         }
     }
 
-    public function userBatch(Request $request) {
+    public function batch(Request $request) {
         try {
             $message = '';
             if($request->input('action') == 'deleteuser') {
@@ -1236,6 +1171,27 @@ class AdminController extends Controller
                 User::whereIn('id', $request->input('ids'))->delete();
                 
                 $message = 'User successfully deleted';
+            } elseif($request->input('action') == 'deletemetadata') {
+                Metadata::whereIn('id', $request['ids'])->delete();
+                $message = 'Meta Data successfully deleted!';
+            } elseif($request->input('action') == 'deletemeta') {
+                Metadata::whereIn('meta_id', $request['ids'])->delete();
+                Meta::whereIn('id', $request['ids'])->delete();
+                $message = 'Meta Successfully deleted!';
+            } elseif($request->input('action') == 'deleterole') {
+                // delete roles attached to user
+                DB::table('role_user')->whereIn('role_id', $request['ids'])->delete();
+                // delete roles attached to permission
+                DB::table('permission_role')->whereIn('role_id', $request['ids'])->delete();
+                // delete role
+                Role::whereIn('id', $request['ids'])->delete();
+                $message = 'Role successfully deleted';
+            } elseif($request->input('action') == 'deletepermission') {
+                // delete from permission_role
+                DB::table('permission_role')->whereIn('permission_id', $request['ids'])->delete();
+                DB::table('permission_user')->whereIn('permission_id', $request['ids'])->delete();
+                Permission::whereIn('id', $request['ids'])->delete();
+                $message = 'Permission(s) successfull deleted!';
             }
 
             return response()->json(['success' => true, 'message' => $message]);
