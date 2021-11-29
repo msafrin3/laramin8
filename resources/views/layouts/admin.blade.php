@@ -79,7 +79,7 @@
 		</style>
 
 	</head>
-	<body data-plugin-page-transition>
+	<body class="loading-overlay-showing" data-loading-overlay data-plugin-options="{'hideDelay': 500, 'effect': 'cubes'}">
 		<div class="body">
 			<header id="header" class="side-header d-flex">
 				<div class="header-body">

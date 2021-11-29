@@ -19,9 +19,9 @@
                         <input class="form-check-input" type="checkbox" 
                         name="{{ $form['name'] }}[]" 
                         value="{{ $option['id'] }}" 
-                        id="check{{ $option['id'] }}" 
+                        id="check{{ $form['name'].$option['id'] }}" 
                         @isset($option['is_checked']) @if($option['is_checked'] == 1) checked="checked" @endif @endisset>
-                        <label class="form-check-label" for="check{{ $option['id'] }}">
+                        <label class="form-check-label" for="check{{ $form['name'].$option['id'] }}">
                             {{ $option['name'] }}
                         </label>
                     </div>

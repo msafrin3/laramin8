@@ -927,7 +927,8 @@ class AdminController extends Controller
                 'label' => 'Add User',
                 'icon' => 'fa-user-plus',
                 'link' => route('admin.user.add'),
-                'class' => 'btn-primary'
+                'class' => 'btn-primary',
+                'modal' => true
             )
         );
         $data['actions'] = array(
@@ -969,6 +970,11 @@ class AdminController extends Controller
             array(
                 'dt' => 'updated_at',
                 'label' => 'Updated At'
+            ),
+            array(
+                'dt' => 'actions',
+                'label' => 'Actions',
+                'class' => 'text-center'
             )
         );
 
@@ -994,12 +1000,248 @@ class AdminController extends Controller
                 }
                 return $permissions;
             })
-            ->rawColumns(['roles', 'permissions'])
+            ->editColumn('actions', function($query) {
+                return '<button type="button" class="btn btn-quaternary btn-sm displayModal" data-modal_url="'. route('admin.user.edit', $query->id) .'">Edit</button>';
+            })
+            ->rawColumns(['roles', 'permissions', 'actions'])
             ->make(true);
     }
 
     public function userAdd() {
-        // to be continue...
+        $data['title'] = 'Add New User';
+        $data['posturl'] = route('admin.user.store');
+        $roles_list = Role::select(['id', DB::raw('display_name as name')])->get();
+        $permissions_list = Permission::select(['id', DB::raw('display_name as name')])->get();
+        $data['forms'] = array(
+            array(
+                'label' => 'Name',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'text',
+                    'name' => 'name',
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter Name',
+                    'required' => 'required'
+                )
+            ),
+            array(
+                'label' => 'Email',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'email',
+                    'name' => 'email',
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter Email',
+                    'required' => 'required'
+                )
+            ),
+            array(
+                'label' => 'Password',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'password',
+                    'name' => 'password',
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter Password',
+                    'required' => 'required'
+                )
+            ),
+            array(
+                'label' => 'Password Confirmation',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'password',
+                    'name' => 'password_confirmation',
+                    'class' => 'form-control',
+                    'placeholder' => 'Re-type Password',
+                    'required' => 'required'
+                )
+            ),
+            array(
+                'label' => 'Roles',
+                'type' => 'checkbox',
+                'name' => 'roles',
+                'options' => $roles_list
+            ),
+            array(
+                'label' => 'Permissions',
+                'type' => 'checkbox',
+                'name' => 'permissions',
+                'options' => $permissions_list
+            )
+        );
+
+        return view('layouts.basic-form', $data);
+    }
+
+    public function userStore(Request $request) {
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|max:255',
+                'email' => 'required|unique:users',
+                'password' => 'required|string|min:6|confirmed'
+            ]);
+
+            if($validator->fails()) {
+                return response()->json(['success' => false, 'message' => $validator->errors()->first()]);
+            }
+
+            $data = $request->except(['roles', 'permissions']);
+            $data['password'] = bcrypt($request->input('password'));
+            $user = User::create($data);
+
+            if($request->has('roles')) {
+                $user->attachRoles($request->input('roles'));
+                $user->syncRoles($request->input('roles'));
+            }
+            if($request->has('permissions')) {
+                $user->attachPermissions($request->input('permissions'));
+                $user->syncPermissions($request->input('permissions'));
+            }
+
+            return response()->json(['success' => true, 'message' => 'User successfully created!']);
+        } catch(\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function userEdit(User $user, Request $request) {
+        $data['title'] = 'Edit User';
+        $data['posturl'] = route('admin.user.update', $user->id);
+
+        $roles_list = DB::table('roles')->select([
+            'roles.id',
+            'roles.display_name as name',
+            DB::raw('if(role_user.user_id is not null, 1, 0) as is_checked')
+        ])
+        ->leftJoin('role_user', function($join) use ($user) {
+            $join->on('role_user.role_id', 'roles.id');
+            $join->on('role_user.user_id', DB::raw($user->id));
+        })
+        ->get();
+
+        $permissions_list = DB::table('permissions')->select([
+            'permissions.id',
+            'permissions.display_name as name',
+            DB::raw('if(permission_user.user_id is not null, 1, 0) as is_checked')
+        ])
+        ->leftJoin('permission_user', function($join) use ($user) {
+            $join->on('permission_user.permission_id', 'permissions.id');
+            $join->on('permission_user.user_id', DB::raw($user->id));
+        })
+        ->get();
+
+        $data['forms'] = array(
+            array(
+                'label' => 'Name',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'text',
+                    'name' => 'name',
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter Name',
+                    'required' => 'required',
+                    'value' => $user->name
+                )
+            ),
+            array(
+                'label' => 'Email',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'email',
+                    'name' => 'email',
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter Email',
+                    'required' => 'required',
+                    'value' => $user->email
+                )
+            ),
+            array(
+                'label' => 'Password',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'password',
+                    'name' => 'password',
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter Password'
+                )
+            ),
+            array(
+                'label' => 'Password Confirmation',
+                'type' => 'input',
+                'attributes' => array(
+                    'type' => 'password',
+                    'name' => 'password_confirmation',
+                    'class' => 'form-control',
+                    'placeholder' => 'Re-type Password'
+                )
+            ),
+            array(
+                'label' => 'Roles',
+                'type' => 'checkbox',
+                'name' => 'roles',
+                'options' => json_decode(json_encode($roles_list), true)
+            ),
+            array(
+                'label' => 'Permissions',
+                'type' => 'checkbox',
+                'name' => 'permissions',
+                'options' => json_decode(json_encode($permissions_list), true)
+            )
+        );
+        return view('layouts.basic-form', $data);
+    }
+
+    public function userUpdate(User $user, Request $request) {
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|max:255',
+                'email' => 'required|unique:users,email,'.$user->id,
+                'password' => 'confirmed'
+            ]);
+
+            if($validator->fails()) {
+                return response()->json(['success' => false, 'message' => $validator->errors()->first()]);
+            }
+
+            $data = $request->except(['roles', 'permissions']);
+            if($request->has('password')) {
+                $data['password'] = bcrypt($request->input('password'));
+            }
+
+            $user->update($data);
+
+            if($request->has('roles')) {
+                $user->syncRoles($request->input('roles'));
+            }
+            if($request->has('permissions')) {
+                $user->syncPermissions($request->input('permissions'));
+            }
+
+            return response()->json(['success' => true, 'message' => 'User successfully updated.']);
+        } catch(\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function userBatch(Request $request) {
+        try {
+            $message = '';
+            if($request->input('action') == 'deleteuser') {
+                // delete from table role_user
+                DB::table('role_user')->whereIn('user_id', $request->input('ids'))->delete();
+                // delete from table permission_user
+                DB::table('permission_user')->whereIn('user_id', $request->input('ids'))->delete();
+                // delete user
+                User::whereIn('id', $request->input('ids'))->delete();
+                
+                $message = 'User successfully deleted';
+            }
+
+            return response()->json(['success' => true, 'message' => $message]);
+        } catch(\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
     }
 
 }
