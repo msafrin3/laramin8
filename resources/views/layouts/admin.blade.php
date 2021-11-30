@@ -79,7 +79,8 @@
 		</style>
 
 	</head>
-	<body class="loading-overlay-showing" data-loading-overlay data-plugin-options="{'hideDelay': 500, 'effect': 'cubes'}">
+	{{-- <body class="loading-overlay-showing" data-loading-overlay data-plugin-options="{'hideDelay': 500, 'effect': 'cubes'}"> --}}
+	<body>
 		<div class="body">
 			<header id="header" class="side-header d-flex">
 				<div class="header-body">

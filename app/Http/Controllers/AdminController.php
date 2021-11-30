@@ -13,6 +13,7 @@ use App\Models\Role;
 use App\Models\Permission;
 use App\Models\Meta;
 use App\Models\Metadata;
+use App\Models\Logs;
 
 class AdminController extends Controller
 {
@@ -291,8 +292,7 @@ class AdminController extends Controller
             array(
                 'id' => 'deleterole',
                 'label' => 'Delete',
-                'message' => 'Are you sure want to delete selected role',
-                'route' => route('admin.role.batch')
+                'message' => 'Are you sure want to delete selected role'
             )
         );
         $data['batch_route'] = route('admin.batch');
@@ -519,8 +519,7 @@ class AdminController extends Controller
             array(
                 'id' => 'deletemeta',
                 'label' => 'Delete',
-                'message' => 'Are you sure want to delete this Meta',
-                'route' => route('admin.meta.batch')
+                'message' => 'Are you sure want to delete this Meta'
             )
         );
 
@@ -1198,6 +1197,88 @@ class AdminController extends Controller
         } catch(\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
+    }
+
+    public function log() {
+        $data['title'] = 'System Activity Log';
+        $data['datatable_route'] = route('admin.log.list');
+        $data['batch_route'] = route('admin.batch');
+        $data['breadcrumb'] = array(
+            array(
+                'title' => 'Home',
+                'url' => '/admin',
+                'active' => false
+            ),
+            array(
+                'title' => 'System Activity',
+                'url' => '',
+                'active' => true
+            )
+        );
+        $data['columns'] = array(
+            array(
+                'dt' => 'id',
+                'label' => 'id',
+                'visible' => false
+            ),
+            array(
+                'dt' => 'user_name',
+                'label' => 'User'
+            ),
+            array(
+                'dt' => 'url',
+                'label' => 'URL'
+            ),
+            array(
+                'dt' => 'method',
+                'label' => 'Method'
+            ),
+            array(
+                'dt' => 'params',
+                'label' => 'Parameters',
+                'class' => 'text-center'
+            ),
+            array(
+                'dt' => 'ip_address',
+                'label' => 'IP Address'
+            ),
+            array(
+                'dt' => 'user_agent',
+                'label' => 'User Agent'
+            ),
+            array(
+                'dt' => 'created_at',
+                'label' => 'Created At'
+            ),
+            array(
+                'dt' => 'updated_at',
+                'label' => 'Updated At'
+            )
+        );
+        $data['order'] = 7;
+        $data['sort_order'] = 'Desc';
+        $data['no_select'] = true;
+
+        return view('layouts.datatable', $data);
+    }
+
+    public function logGet(Request $request) {
+        $logs = DB::table('logs')->select([
+            'logs.*',
+            'users.name as user_name'
+        ])
+        ->leftJoin('users', 'logs.user_id', 'users.id')
+        ->get();
+        return DataTables::of($logs)
+            ->editColumn('params', function($query) {
+                return '<a class="displayModal" data-modal_url="'. route('admin.log.param', $query->id) .'">Parameters</a>';
+            })
+            ->rawColumns(['params'])
+            ->make(true);
+    }
+
+    public function logParam(Logs $log) {
+        return view('admin.logs-paramter', ['log' => $log]);
     }
 
 }

@@ -63,15 +63,17 @@
                         @endforeach
                     @endisset
                 </div>
-                <table id="maintable" class="table table-bordered table-hover">
-                    <thead>
-                        <tr>
-                            @foreach($columns as $column)
-                            <th>{{ $column['label'] }}</th>
-                            @endforeach
-                        </tr>
-                    </thead>
-                </table>
+                <div class="table-responsive">
+                    <table id="maintable" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                @foreach($columns as $column)
+                                <th>{{ $column['label'] }}</th>
+                                @endforeach
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -106,6 +108,8 @@
                         @endforeach
                     }
                 },
+                @isset($no_select)
+                @else
                 'columnDefs': [{
                     'targets': 0,
                     'checkboxes': {
@@ -120,6 +124,7 @@
                 'select': {
                     'style': 'multi'
                 },
+                @endisset
                 'columns': [
                     @foreach($columns as $column)
                     {
@@ -130,7 +135,12 @@
                         className: @isset($column['class']) "{{ $column['class'] }}" @else "" @endisset
                     },
                     @endforeach
+                ],
+                @isset($order)
+                'order': [
+                    [{{ $order }}, "{{ $sort_order }}"]
                 ]
+                @endisset
             });
 
             $('#maintable').on('error.dt', function(e, settings, techNote, message) {
@@ -157,6 +167,7 @@
             // Handle form submission event 
             $("#action").on("change", function(e) {
                 var msg = '';
+                @isset($actions)
                 @foreach($actions as $action)
                     if($("#action").val() == "{{ $action['id'] }}") {
                         msg = "{{ $action['message'] }}";
@@ -193,6 +204,7 @@
                         $("#action").val('');
                     });
                 }
+                @endisset
             });
         });
 

@@ -29,6 +29,10 @@ return [
         [
             'title' => 'User Management',
             'url' => 'admin/user'
+        ],
+        [
+            'title' => 'System Activity',
+            'url' => 'admin/log'
         ]
     ]
 ];
