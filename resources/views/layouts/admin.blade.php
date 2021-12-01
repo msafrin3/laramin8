@@ -77,6 +77,7 @@
 				border-bottom-width: 1px !important;
 			}
 		</style>
+		@yield('headerScripts')
 
 	</head>
 	{{-- <body class="loading-overlay-showing" data-loading-overlay data-plugin-options="{'hideDelay': 500, 'effect': 'cubes'}"> --}}

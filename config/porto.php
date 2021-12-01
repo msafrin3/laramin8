@@ -33,6 +33,10 @@ return [
         [
             'title' => 'System Activity',
             'url' => 'admin/log'
+        ],
+        [
+            'title' => 'System Summary',
+            'url' => 'admin/analysis'
         ]
     ]
 ];

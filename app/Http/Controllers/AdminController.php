@@ -1284,4 +1284,8 @@ class AdminController extends Controller
         return view('admin.logs-paramter', ['log' => $log]);
     }
 
+    public function analysis() {
+        return view('admin.analysis');
+    }
+
 }
