@@ -46,6 +46,10 @@ class Kernel extends HttpKernel
 
         'logs' => [
             \App\Http\Middleware\LogsMiddleware::class,
+        ],
+
+        'admin' => [
+            \App\Http\Middleware\AdminMiddleware::class,
         ]
     ];
 
