@@ -50,9 +50,6 @@ class AdminController extends Controller
             )
         );
 
-        $name_list = Permission::select('id', 'name')->get()->toArray();
-        array_unshift($name_list, ['id' => '', 'name' => 'Select Name']);
-
         $data['columns'] = array(
             array(
                 'dt' => 'id',
@@ -60,10 +57,7 @@ class AdminController extends Controller
             ),
             array(
                 'dt' => 'name',
-                'label' => 'Name',
-                'filter' => array(
-                    'value' => $name_list
-                )
+                'label' => 'Name'
             ),
             array(
                 'dt' => 'display_name',
@@ -1215,6 +1209,8 @@ class AdminController extends Controller
                 'active' => true
             )
         );
+        $user_list = User::all()->toArray();
+        array_unshift($user_list, array('id' => '', 'name' => 'All User'));
         $data['columns'] = array(
             array(
                 'dt' => 'id',
@@ -1223,7 +1219,10 @@ class AdminController extends Controller
             ),
             array(
                 'dt' => 'user_name',
-                'label' => 'User'
+                'label' => 'User',
+                'filter' => array(
+                    'value' => $user_list
+                )
             ),
             array(
                 'dt' => 'url',
@@ -1267,8 +1266,12 @@ class AdminController extends Controller
             'logs.*',
             'users.name as user_name'
         ])
-        ->leftJoin('users', 'logs.user_id', 'users.id')
-        ->get();
+        ->leftJoin('users', 'logs.user_id', 'users.id');
+
+        if($request['user_name']) {
+            $logs->where('logs.user_id', $request['user_name']);
+        }
+
         return DataTables::of($logs)
             ->editColumn('params', function($query) {
                 return '<a class="displayModal" data-modal_url="'. route('admin.log.param', $query->id) .'">Parameters</a>';

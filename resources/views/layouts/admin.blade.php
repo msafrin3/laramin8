@@ -89,8 +89,8 @@
 							<div class="header-row flex-row justify-content-start justify-content-lg-center py-lg-5">
 								<div class="header-logo">
 									<a href="{{ url('admin') }}">
-										{{-- <img alt="Porto" width="100" height="48" src="{{ url('') }}/porto/img/logo-default-slim.png"> --}}
-										Laravel Admin 8
+										<img alt="Porto" width="100" height="48" src="{{ url('') }}/porto/img/logo-default-slim.png">
+										{{-- Laravel Admin 8 --}}
 									</a>
 								</div>
 							</div>
@@ -98,6 +98,10 @@
 								<div class="header-nav header-nav-links header-nav-links-side-header header-nav-links-vertical header-nav-links-vertical-dropdown align-self-start">
 									<div class="header-nav-main header-nav-main-square header-nav-main-dropdown-no-borders header-nav-main-effect-4 header-nav-main-sub-effect-1">
 										<nav class="collapse">
+											<div style="display: flex;padding: 15px 0px 15px 18px;">
+												<div style="display: flex;align-items: center;justify-content: center;font-size: 25px;padding: 0 15px 0 0px;"><i class="fa fa-user"></i></div>
+												<div style="line-height: 1.3;"><b class="text-uppercase">{{ Auth::user()->name }}</b><br/>{{ Auth::user()->email }}</div>
+											</div>
 											<ul class="nav nav-pills" id="mainNav">
 												@include('layouts.sidebar')
 											</ul>
