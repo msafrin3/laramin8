@@ -1288,4 +1288,58 @@ class AdminController extends Controller
         return view('admin.analysis');
     }
 
+    public function analysisGet(Request $request) {
+        $logs = DB::table('logs')->select([
+            'logs.*', 
+            DB::raw("if(logs.user_id is null, 'Guest User', users.name) as user_name"),
+            DB::raw("date(logs.created_at) as date")
+        ])
+        ->leftJoin('users', 'logs.user_id', 'users.id');
+
+        $data['todays_visitor'] = clone $logs;
+        $data['todays_visitor'] = $data['todays_visitor']->where(DB::raw("date(logs.created_at)"), date('Y-m-d'))->groupBy('logs.user_id')->groupBy('logs.ip_address')->get()->count();
+
+        $data['todays_login'] = clone $logs;
+        $data['todays_login'] = $data['todays_login']->where('logs.is_login', 1)->where(DB::raw("date(logs.created_at)"), date('Y-m-d'))->count();
+
+        $data['last_30days'] = clone $logs;
+        $data['last_30days'] = $data['last_30days']->where('logs.is_login', 1)->where('logs.created_at', '>', DB::raw("now() - interval 30 day"))->count();
+
+        $data['total_user'] = User::count();
+
+        $data['last_30days_data'] = clone $logs;
+        $data['last_30days_data'] = $data['last_30days_data']->where('logs.is_login', 1)->where('logs.created_at', '>', DB::raw("now() - interval 30 day"))->orderBy(DB::raw("date(logs.created_at)"), 'desc')->get();
+
+        $data['current_active'] = DB::table('sessions')->select([
+            'sessions.*',
+            'users.name as user_name',
+            DB::raw("FROM_UNIXTIME(sessions.last_activity) as last_activity_date")
+        ])
+        ->leftJoin('users', 'sessions.user_id', 'users.id')
+        ->get();
+
+        $data['most_active_user'] = DB::table('logs')->select([
+            'logs.*', 
+            DB::raw("if(logs.user_id is null, 'Guest User', users.name) as user_name"),
+            DB::raw("date(logs.created_at) as date"),
+            DB::raw("count(*) as total")
+        ])
+        ->leftJoin('users', 'logs.user_id', 'users.id')
+        ->groupBy('logs.user_id')
+        ->orderBy('total', 'desc')
+        ->get();
+
+        $data['daily_login'] = DB::table('logs')->select([
+            'logs.*', 
+            DB::raw("date(logs.created_at) as date"),
+            DB::raw("count(*) as total")
+        ])
+        ->leftJoin('users', 'logs.user_id', 'users.id')
+        ->groupBy(DB::raw("date(logs.created_at)"))
+        ->orderBy(DB::raw("date(logs.created_at)"), 'desc')
+        ->get();
+        
+        return response()->json($data);
+    }
+
 }

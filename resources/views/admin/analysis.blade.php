@@ -11,6 +11,9 @@
             font-weight: 500;
             color: red;
         }
+        .text-right {
+            text-align: right;
+        }
     </style>
 
 @endsection
@@ -29,7 +32,7 @@
                 <div class="card bg-white">
                     <div class="card-body text-center">
                         <div class="mb-3 d-title">Today's Visitor</div>
-                        <div class="text-danger d-value">9,000</div>
+                        <div class="text-danger d-value todays_visitor">0</div>
                     </div>
                 </div>
             </div>
@@ -37,7 +40,7 @@
                 <div class="card bg-white">
                     <div class="card-body text-center">
                         <div class="mb-3 d-title">Today's Log In</div>
-                        <div class="text-danger d-value">9,000</div>
+                        <div class="text-danger d-value todays_login">0</div>
                     </div>
                 </div>
             </div>
@@ -45,7 +48,7 @@
                 <div class="card bg-white">
                     <div class="card-body text-center">
                         <div class="mb-3 d-title">Last 30 days Log In</div>
-                        <div class="text-danger d-value">9,000</div>
+                        <div class="text-danger d-value last_30days_login">0</div>
                     </div>
                 </div>
             </div>
@@ -53,7 +56,7 @@
                 <div class="card bg-white">
                     <div class="card-body text-center">
                         <div class="mb-3 d-title">Total User</div>
-                        <div class="text-danger d-value">9,000</div>
+                        <div class="text-danger d-value total_user">0</div>
                     </div>
                 </div>
             </div>
@@ -72,68 +75,58 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5>Last 30 days login</h5>
-                        <table class="table">
-                            <tbody>
-                                <tr>
-                                    <td>asd</td>
-                                </tr>
-                                <tr>
-                                    <td>asd</td>
-                                </tr>
-                                <tr>
-                                    <td>asd</td>
-                                </tr>
-                                <tr>
-                                    <td>asd</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <h5><i class="fa fa-user fa-fw"></i> Last 30 days login</h5>
+                        <div style="max-height:300px;overflow-y:auto">
+                            <table class="table">
+                                <tbody class="last_30days_data">
+                                    <tr>
+                                        <th>User</th>
+                                        <th class="text-right">Login At</th>
+                                    </tr>
+                                    <tr>
+                                        <td>Safrin</td>
+                                        <td class="text-success text-right">2021-12-02 09:00:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Safrin</td>
+                                        <td class="text-success text-right">2021-12-02 09:00:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Safrin</td>
+                                        <td class="text-success text-right">2021-12-02 09:00:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Safrin</td>
+                                        <td class="text-success text-right">2021-12-02 09:00:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Safrin</td>
+                                        <td class="text-success text-right">2021-12-02 09:00:00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5>Current Active User</h5>
-                        <table class="table">
-                            <tbody>
-                                <tr>
-                                    <td>asd</td>
-                                </tr>
-                                <tr>
-                                    <td>asd</td>
-                                </tr>
-                                <tr>
-                                    <td>asd</td>
-                                </tr>
-                                <tr>
-                                    <td>asd</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <h5><i class="fa fa-user fa-fw"></i> Current Active User</h5>
+                        <div style="max-height:300px;overflow-y:auto;">
+                            <table class="table">
+                                <tbody class="current_active"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5>Most Active User</h5>
+                        <h5><i class="fa fa-user fa-fw"></i> Most Active User</h5>
                         <table class="table">
-                            <tbody>
-                                <tr>
-                                    <td>asd</td>
-                                </tr>
-                                <tr>
-                                    <td>asd</td>
-                                </tr>
-                                <tr>
-                                    <td>asd</td>
-                                </tr>
-                                <tr>
-                                    <td>asd</td>
-                                </tr>
-                            </tbody>
+                            <tbody class="most_active"></tbody>
                         </table>
                     </div>
                 </div>
@@ -148,11 +141,71 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://momentjs.com/downloads/moment.js"></script>
     <script>
         $(document).ready(function() {
             getDailyLogin();
         });
         function getDailyLogin() {
+            $.ajax({
+                url: "{{ url('admin/analysis/data') }}",
+                type: "GET",
+                success: function(response) {
+                    console.log(response);
+                    $(".todays_visitor").html(parseInt(response.todays_visitor));
+                    $(".todays_login").html(parseInt(response.todays_login));
+                    $(".last_30days_login").html(parseInt(response.last_30days));
+                    $(".total_user").html(parseInt(response.total_user));
+
+                    runningNumber();
+
+                    var last_30days = '';
+                    $.each(response.last_30days_data, function(index,value) {
+                        last_30days += '<tr>'+
+                            '<td>'+ value.user_name +'</td>'+
+                            '<td class="text-success text-right">'+ value.created_at +'</td>'+
+                        '</tr>'
+                    });
+                    $(".last_30days_data").html(
+                        '<tr>'+
+                            '<th>User</th>'+
+                            '<th class="text-right">Login At</th>'+
+                        '</tr>'+
+                        last_30days
+                    );
+
+                    var current_active = '';
+                    $.each(response.current_active, function(index,value) {
+                        current_active += '<tr>'+
+                            '<td>'+ value.user_name +'</td>'+
+                            '<td class="text-success text-right">'+ value.last_activity_date +'</td>'+
+                        '</tr>'
+                    });
+                    $(".current_active").html(
+                        '<tr>'+
+                            '<th>User</th>'+
+                            '<th class="text-right">Last Activity</th>'+
+                        '</tr>'+
+                        current_active
+                    );
+
+                    var most_active = '';
+                    $.each(response.most_active_user, function(index,value) {
+                        most_active += '<tr>'+
+                            '<td>'+ value.user_name +'</td>'+
+                        '</tr>'
+                    });
+                    $(".most_active").html(
+                        '<tr>'+
+                            '<th>User</th>'+
+                        '</tr>'+
+                        most_active
+                    );
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
             Highcharts.chart('container', {
                 exporting: {
                     enabled: false
@@ -232,6 +285,20 @@
                         12600, 11400, 5500, 4512, 4502, 4502, 4500, 4500
                     ]
                 }]
+            });
+        }
+        
+        function runningNumber() {
+            $('.d-value').each(function () {
+                $(this).prop('Counter',0).animate({
+                    Counter: $(this).text()
+                }, {
+                    duration: 2000,
+                    easing: 'swing',
+                    step: function (now) {
+                        $(this).text(Math.ceil(now).toLocaleString());
+                    }
+                });
             });
         }
     </script>

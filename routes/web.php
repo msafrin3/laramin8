@@ -75,4 +75,5 @@ Route::group(['middleware' => ['auth', 'admin']], function() {
     Route::post('admin/log/list', [App\Http\Controllers\AdminController::class, 'logGet'])->name('admin.log.list');
     Route::get('admin/log/parameters/{log}', [App\Http\Controllers\AdminController::class, 'logParam'])->name('admin.log.param');
     Route::get('admin/analysis', [App\Http\Controllers\AdminController::class, 'analysis'])->name('admin.analysis');
+    Route::get('admin/analysis/data', [App\Http\Controllers\AdminController::class, 'analysisGet'])->name('admin.analysis.data');
 });
