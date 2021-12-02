@@ -32,6 +32,7 @@ class LogsMiddleware
         $data['method'] = $request->method();
         if($request->path() == 'login' && $request->method() == 'POST') {
             $data['params'] = json_encode($request->except(['password']), true);
+            $data['is_login'] = 1;
         } else {
             $data['params'] = json_encode($request->all(), true);
         }

@@ -17,6 +17,8 @@ class CreateLogsTable extends Migration
             $table->id();
             $table->integer('user_id')->nullable();
             $table->text('url')->nullable();
+            $table->integer('is_login')->default(0);
+            $table->integer('is_login_success')->default(0);
             $table->string('method')->nullable();
             $table->text('params')->nullable();
             $table->string('ip_address')->nullable();
