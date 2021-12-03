@@ -14,8 +14,8 @@
 		<meta name="author" content="okler.net">
 
 		<!-- Favicon -->
-		<link rel="shortcut icon" href="{{ url('') }}/porto/img/favicon.ico" type="image/x-icon" />
-		<link rel="apple-touch-icon" href="{{ url('') }}/porto/img/apple-touch-icon.png">
+		<link rel="shortcut icon" href="{{ url('') }}/images/logo.png" type="image/x-icon" />
+		<link rel="apple-touch-icon" href="{{ url('') }}/images/logo.png">
 
 		<!-- Mobile Metas -->
 		<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
