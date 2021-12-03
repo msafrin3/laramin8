@@ -90,8 +90,9 @@
 							<div class="header-row flex-row justify-content-start justify-content-lg-center py-lg-5">
 								<div class="header-logo">
 									<a href="{{ url('admin') }}">
-										<img alt="Porto" width="100" height="48" src="{{ url('') }}/porto/img/logo-default-slim.png">
-										{{-- Laravel Admin 8 --}}
+										{{-- <img alt="Porto" width="100" height="48" src="{{ url('') }}/porto/img/logo-default-slim.png"> --}}
+										{{-- <b>Laravel</b> Admin --}}
+										<img alt="Porto" width="150" src="{{ url('') }}/images/laramin.png">
 									</a>
 								</div>
 							</div>

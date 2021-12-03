@@ -1335,6 +1335,7 @@ class AdminController extends Controller
             DB::raw("count(*) as total")
         ])
         ->leftJoin('users', 'logs.user_id', 'users.id')
+        ->where('logs.is_login', 1)
         ->groupBy(DB::raw("date(logs.created_at)"))
         ->orderBy(DB::raw("date(logs.created_at)"), 'desc')
         ->get();
