@@ -1133,8 +1133,11 @@ class AdminController extends Controller
             }
 
             $data = $request->except(['roles', 'permissions']);
-            if($request->has('password')) {
+            if($request->has('password') && $request->input('password') != null) {
                 $data['password'] = bcrypt($request->input('password'));
+            } else {
+                unset($data['password']);
+                unset($data['password_confirmation']);
             }
 
             $user->update($data);
