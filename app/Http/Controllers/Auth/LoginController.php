@@ -69,7 +69,7 @@ class LoginController extends Controller
             }
             Logs::create($data);
 
-            return redirect()->intended('dashboard');
+            return redirect()->intended('home');
         }
 
         return back()->withErrors([
