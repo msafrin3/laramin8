@@ -386,10 +386,11 @@ class AdminController extends Controller
             $data = $request->except(['permissions']);
 
             $role = Role::create($data);
-            $role->attachPermissions($request->input('permissions'));
+            if($request->has('permissions')) $role->attachPermissions($request->input('permissions'));
 
             return response()->json(['success' => true, 'message' => 'Role Created']);
         } catch(\Exception $e) {
+            dd($e);
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
