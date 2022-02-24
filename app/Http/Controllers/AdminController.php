@@ -455,6 +455,16 @@ class AdminController extends Controller
         return view('layouts.basic-form', $data);
     }
 
+    public function roleUpdate(Request $request, Role $role) {
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'reqiured|unique:roles'
+            ]);
+        } catch(\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
     public function meta() {
         $data['title'] = 'Meta Management';
         $data['breadcrumb'] = array(
