@@ -1,5 +1,14 @@
 @extends($layout)
 @section('title', $title)
+@section('headerScripts')
+
+    <style>
+        .no-wrap {
+            white-space: nowrap;
+        }
+    </style>
+
+@endsection
 @section('content')
 
     <div class="m-4">

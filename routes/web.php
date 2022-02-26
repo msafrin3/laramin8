@@ -32,6 +32,7 @@ Route::group(['middleware' => 'logs'], function() {
         Route::post('kempen/add', [App\Http\Controllers\KempenController::class, 'store'])->name('kempen.store');
         Route::get('kempen/edit/{kempen}', [App\Http\Controllers\KempenController::class, 'edit'])->name('kempen.edit');
         Route::post('kempen/edit/{kempen}', [App\Http\Controllers\KempenController::class, 'update'])->name('kempen.update');
+        Route::get('kempen/view/{kempen}', [App\Http\Controllers\KempenController::class, 'view'])->name('kempen.view');
         Route::post('kempen/batch', [App\Http\Controllers\KempenController::class, 'batch'])->name('kempen.batch');
     
         Route::group(['middleware' => 'admin'], function() {

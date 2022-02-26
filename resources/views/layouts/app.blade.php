@@ -66,6 +66,9 @@
 		<link rel="stylesheet" href="{{ url('') }}/plugins/dataTables/dataTables.checkboxes.css">
         <link rel="stylesheet" href="//cdn.datatables.net/fixedcolumns/3.3.0/css/fixedColumns.dataTables.min.css">
 
+        {{-- Selectize --}}
+        <link rel="stylesheet" href="{{ url('') }}/plugins/selectize/dist/css/selectize.default.css">
+
 		<style>
 			.table {
 				color: unset !important;
@@ -201,6 +204,9 @@
 		<script type="text/javascript" src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
         <script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/3.3.0/js/dataTables.fixedColumns.min.js"></script>
         <script src="{{ url('') }}/plugins/dataTables/dataTables.checkboxes.min.js"></script>
+
+        {{-- Selectize --}}
+        <script src="{{ url('') }}/plugins/selectize/dist/js/standalone/selectize.min.js"></script>
 
 		@yield('footerScripts')
 </body>

@@ -1,4 +1,4 @@
-<form>
+<form id="myform">
     <div class="modal-header">
         <h4 class="modal-title">Tambah Kempen</h4>
     </div>
@@ -38,7 +38,7 @@
         <div class="form-group row">
             <label class="col-md-3 col-form-label">Jenis Kempen</label>
             <div class="col-md-6">
-                <select name="jenis_mtdt_id" class="form-control" required>
+                <select name="type_mtdt_id" class="form-control" required>
                     @foreach($types as $type)
                     <option value="{{ $type->id }}">{{ $type->value }}</option>
                     @endforeach
@@ -48,7 +48,7 @@
         <div class="form-group row">
             <label class="col-md-3 col-form-label">Lokasi</label>
             <div class="col-md-6">
-                <input type="text" class="form-control" name="location" required>
+                <input type="text" class="location" name="location" required>
             </div>
         </div>
         <div class="form-group row">
@@ -66,7 +66,7 @@
         <div class="form-group row">
             <label class="col-md-3 col-form-label">Penganjur</label>
             <div class="col-md-6">
-                <input type="text" class="form-control" name="penganjur" required>
+                <input type="text" class="penganjur" name="penganjur" required>
             </div>
         </div>
         <div class="form-group row">
@@ -85,6 +85,22 @@
                 <input type="number" class="form-control" name="anggaran_peserta">
             </div>
         </div>
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label">Kategori</label>
+            <div class="col-md-6">
+                <select name="kategori_mtdt_id" class="form-control" required>
+                    @foreach($kategoris as $kategori)
+                    <option value="{{ $kategori->id }}">{{ $kategori->value }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label">Tetamu yang hadir</label>
+            <div class="col-md-9">
+                <input type="text" class="vip" name="vips">
+            </div>
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-quaternary" data-bs-dismiss="modal">Batal</button>
@@ -95,6 +111,47 @@
 <script>
     $(document).ready(function() {
         getParlimen(1);
+        $(".vip").selectize({
+            delimiter: ";",
+            persist: false,
+            create: true,
+            valueField: 'input',
+            labelField: 'input',
+            searchField: 'input',
+            options: [
+                @foreach($vips as $vip)
+                { input: "{{ $vip }}" },
+                @endforeach
+            ]
+        });
+
+        $(".penganjur").selectize({
+            maxItems: 1,
+            persist: false,
+            create: true,
+            valueField: 'input',
+            labelField: 'input',
+            searchField: 'input',
+            options: [
+                @foreach($penganjurs as $penganjur)
+                { input: "{{ $penganjur }}" },
+                @endforeach
+            ]
+        });
+
+        $(".location").selectize({
+            maxItems: 1,
+            persist: false,
+            create: true,
+            valueField: 'input',
+            labelField: 'input',
+            searchField: 'input',
+            options: [
+                @foreach($locations as $location)
+                { input: "{{ $location }}" },
+                @endforeach
+            ]
+        });
     });
 
     $(document).on("change", "select[name=parid]", function() {
@@ -166,4 +223,43 @@
             }
         });
     }
+</script>
+
+<script>
+    $("#myform").submit(function(e) {
+        e.preventDefault();
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            url: "{{ url('kempen/add') }}",
+            type: "POST",
+            enctype: "multipart/form-data",
+            data: new FormData($("#myform")[0]),
+            processData: false,
+            contentType: false,
+            cache: false,
+            success: function(response) {
+                console.log(response);
+                if(response.success) {
+                    $("#modal_display").modal('toggle');
+                    Swal.fire({
+                        title: 'Berjaya',
+                        html: response.message,
+                        icon: 'success'
+                    });
+                    $("#maintable").DataTable().draw();
+                } else {
+                    Swal.fire({
+                        title: 'Ralat',
+                        html: response.message,
+                        icon: 'error'
+                    });
+                }
+            },
+            error: function(err) {
+                console.log(err);
+            }
+        });
+    });
 </script>
