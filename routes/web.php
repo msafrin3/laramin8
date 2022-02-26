@@ -17,14 +17,22 @@ use Illuminate\Support\Facades\Auth;
 
 
 Route::group(['middleware' => 'logs'], function() {
-    Route::get('/', function () {
-        return view('welcome');
-    });
+    Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Auth::routes();
     
     Route::group(['middleware' => 'auth'], function() {
         Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
         Route::post('/setTheme', [App\Http\Controllers\SettingController::class, 'setTheme'])->name('setTheme');
+
+        Route::get('dashboard/statistic', [App\Http\Controllers\StatisticController::class, 'index'])->name('dashboard.statistic');
+
+        Route::get('kempen', [App\Http\Controllers\KempenController::class, 'index'])->name('kempen.index');
+        Route::post('kempen/list', [App\Http\Controllers\KempenController::class, 'list'])->name('kempen.list');
+        Route::get('kempen/add', [App\Http\Controllers\KempenController::class, 'create'])->name('kempen.add');
+        Route::post('kempen/add', [App\Http\Controllers\KempenController::class, 'store'])->name('kempen.store');
+        Route::get('kempen/edit/{kempen}', [App\Http\Controllers\KempenController::class, 'edit'])->name('kempen.edit');
+        Route::post('kempen/edit/{kempen}', [App\Http\Controllers\KempenController::class, 'update'])->name('kempen.update');
+        Route::post('kempen/batch', [App\Http\Controllers\KempenController::class, 'batch'])->name('kempen.batch');
     
         Route::group(['middleware' => 'admin'], function() {
             Route::get('admin', function() {

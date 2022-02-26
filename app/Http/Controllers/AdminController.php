@@ -23,6 +23,7 @@ class AdminController extends Controller
     }
 
     public function permission() {
+        $data['layout'] = 'layouts.admin';
         $data['title'] = 'Permission Management';
         $data['datatable_route'] = route('admin.permission.list');
         $data['batch_route'] = route('admin.batch');
@@ -229,6 +230,7 @@ class AdminController extends Controller
     }
 
     public function role() {
+        $data['layout'] = 'layouts.admin';
         $data['title'] = 'Role Management';
         $data['datatable_route'] = route('admin.role.list');
         $data['breadcrumb'] = array(
@@ -466,6 +468,7 @@ class AdminController extends Controller
     }
 
     public function meta() {
+        $data['layout'] = 'layouts.admin';
         $data['title'] = 'Meta Management';
         $data['breadcrumb'] = array(
             array(
@@ -639,6 +642,7 @@ class AdminController extends Controller
     }
 
     public function metadata() {
+        $data['layout'] = 'layouts.admin';
         $data['title'] = 'Meta Data Management';
         $data['datatable_route'] = route('admin.metadata.list');
         $data['batch_route'] = route('admin.batch');
@@ -845,6 +849,7 @@ class AdminController extends Controller
     }
 
     public function user() {
+        $data['layout'] = 'layouts.admin';
         $data['title'] = 'User Management';
         $data['datatable_route'] = route('admin.user.list');
         $data['batch_route'] = route('admin.batch');
@@ -1208,6 +1213,7 @@ class AdminController extends Controller
     }
 
     public function log() {
+        $data['layout'] = 'layouts.admin';
         $data['title'] = 'System Activity Log';
         $data['datatable_route'] = route('admin.log.list');
         $data['batch_route'] = route('admin.batch');
